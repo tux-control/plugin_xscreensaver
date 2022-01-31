@@ -1,0 +1,58 @@
+stages:
+  - test
+  - package
+  - deploy
+
+test:debian:
+  stage: test
+  script:
+    - apt-get update -qy
+    - apt-get install -y curl gnupg apt-transport-https python3-dev python3-pip
+    - python3 setup.py install
+    - python3 setup.py test
+  tags:
+    - debian
+
+
+
+package:debian:
+  stage: package
+  script:
+    - apt-get update -qy
+    - apt-get install -y curl gnupg apt-transport-https wget
+    - wget -O- https://repository.salamek.cz/deb/salamek.gpg | tee /usr/share/keyrings/salamek-archive-keyring.gpg
+    - echo "deb     [signed-by=/usr/share/keyrings/salamek-archive-keyring.gpg] https://repository.salamek.cz/deb/pub all main" | tee /etc/apt/sources.list.d/salamek.cz.list
+    - apt-get update -qy
+    - apt-get install -y python3-dev dh-python python3-pip python3-stdeb python3-xmltodict python3-xscreensaver-config tux-control
+    - rm -rf "./deb_dist"
+    - python3 setup.py --command-packages=stdeb.command bdist_deb
+  tags:
+    - debian
+
+  artifacts:
+    paths:
+      - deb_dist/*.deb
+    expire_in: 1d
+
+
+
+deploy:all:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/tux-control-plugin-xscreensaver*.deb'
+    - scp deb_dist/*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
+  dependencies:
+    - package:debian
+  tags:
+    - docker
+  only:
+    - tags
