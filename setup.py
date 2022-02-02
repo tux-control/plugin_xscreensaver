@@ -20,7 +20,7 @@ classifiers = [s.strip() for s in classes.split('\n') if s]
 
 
 setup(
-    name='tux-control',
+    name='tux-control-plugin-xscreensaver',
     version='0.0.4',
     description='Tux Control XScreensaver plugin',
     long_description=open('README.md').read(),
