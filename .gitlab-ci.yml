@@ -7,7 +7,11 @@ test:debian:
   stage: test
   script:
     - apt-get update -qy
-    - apt-get install -y curl gnupg apt-transport-https python3-dev python3-pip
+    - apt-get install -y curl gnupg apt-transport-https wget
+    - wget -O- https://repository.salamek.cz/deb/salamek.gpg | tee /usr/share/keyrings/salamek-archive-keyring.gpg
+    - echo "deb     [signed-by=/usr/share/keyrings/salamek-archive-keyring.gpg] https://repository.salamek.cz/deb/pub all main" | tee /etc/apt/sources.list.d/salamek.cz.list
+    - apt-get update -qy
+    - apt-get install -y curl gnupg apt-transport-https python3-dev python3-pip tux-control
     - python3 setup.py install
     - python3 setup.py test
   tags:

@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'xmltodict',
         'xscreensaver_config',
-        'tux_control'
+        'tux-control'
     ],
     test_suite="tests",
     tests_require=[],
