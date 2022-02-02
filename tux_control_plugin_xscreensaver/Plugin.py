@@ -425,7 +425,62 @@ class Plugin(IPlugin):
 
     def _get_xscreensaver_user_config(self) -> ConfigParser:
         config_path = os.path.join(SystemUser.get_home_dir(), '.xscreensaver')
-        return ConfigParser(config_path, ignore_missing_file=True)
+        config = ConfigParser(config_path, ignore_missing_file=True)
+        if not os.path.isfile(config_path):
+            # File not found, generate default one
+            programs_list = []
+            for item_key, xscreensaver_config in self._get_xscreensaver_config().items():
+                program = {
+                    'command': xscreensaver_config.get('@name'),
+                    'enabled': False,
+                    'renderer': 'GL' if xscreensaver_config.get('@gl') == 'yes' else ''
+                }
+
+                programs_list.append(program)
+
+            config.update({
+                'timeout': '0:10:00',
+                'cycle': '0:10:00',
+                'lock': 'False',
+                'lockTimeout': '0:00:00',
+                'passwdTimeout': '0:00:30',
+                'visualID': 'default',
+                'installColormap': 'True',
+                'verbose': 'False',
+                'splash': 'False',
+                'splashDuration': '0:00:05',
+                #'demoCommand': 'xscreensaver-settings',
+                'nice': '10',
+                'fade': 'True',
+                'unfade': 'True',
+                'fadeSeconds': '0:00:03',
+                'ignoreUninstalledPrograms': 'True',
+                'font': '',
+                'dpmsEnabled': 'False',
+                'dpmsQuickOff': 'False',
+                'dpmsStandby': '2:00:00',
+                'dpmsSuspend': '2:00:00',
+                'dpmsOff': '4:00:00',
+                'grabDesktopImages': 'False',
+                'grabVideoFrames': 'False',
+                'chooseRandomImages': 'False',
+                'imageDirectory': '',
+                'mode': 'random',
+                'selected': '-1',
+                'textMode': 'literal',
+                'textLiteral': 'Tux Control',
+                'textFile': '',
+                'textProgram': 'fortune',
+                'textURL': 'https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss',
+                'dialogTheme': 'default',
+                'programs': programs_list,
+                'pointerHysteresis': '10',
+                'authWarningSlack': '20'
+            })
+
+            config.save()
+
+        return config
 
     def _get_xscreensaver_user_config_dict(self) -> dict:
         return self._get_xscreensaver_user_config().read()
