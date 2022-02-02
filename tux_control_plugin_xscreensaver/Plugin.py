@@ -430,10 +430,11 @@ class Plugin(IPlugin):
             # File not found, generate default one
             programs_list = []
             for item_key, xscreensaver_config in self._get_xscreensaver_config().items():
+                screensaver_section = xscreensaver_config.get('screensaver')
                 program = {
-                    'command': xscreensaver_config.get('@name'),
+                    'command': screensaver_section.get('@name'),
                     'enabled': False,
-                    'renderer': 'GL' if xscreensaver_config.get('@gl') == 'yes' else ''
+                    'renderer': 'GL' if screensaver_section.get('@gl') == 'yes' else ''
                 }
 
                 programs_list.append(program)
