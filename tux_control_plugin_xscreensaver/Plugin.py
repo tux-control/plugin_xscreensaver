@@ -9,7 +9,7 @@ from tux_control.plugin.IPlugin import IPlugin
 from tux_control.plugin.GridColumn import GridColumn
 from tux_control.plugin.IPluginConfigItem import IPluginConfigItem
 from tux_control.plugin.PluginConfigOption import PluginConfigOption
-from tux_control.plugin.SystemUser import SystemUser
+from tux_control.plugin.CurrentUser import CurrentUser
 
 from tux_control.plugin.controls.Checkbox import Checkbox
 from tux_control.plugin.controls.Select import Select
@@ -56,7 +56,7 @@ class Plugin(IPlugin):
 
     @property
     def is_active(self) -> bool:
-        return shutil.which('xscreensaver') is not None and SystemUser.has_permission('xcreeensaver.access')
+        return shutil.which('xscreensaver') is not None and CurrentUser.has_permission('xcreeensaver.access')
 
     @property
     def plugin_config_items(self) -> Iterable[IPluginConfigItem]:
@@ -424,7 +424,7 @@ class Plugin(IPlugin):
         return int(h) * 3600 + int(m) * 60 + int(s)
 
     def _get_xscreensaver_user_config(self) -> ConfigParser:
-        config_path = os.path.join(SystemUser.get_home_dir(), '.xscreensaver')
+        config_path = os.path.join(CurrentUser.get_system_user().home_directory, '.xscreensaver')
         config = ConfigParser(config_path, ignore_missing_file=True)
         if not os.path.isfile(config_path):
             # File not found, generate default one
