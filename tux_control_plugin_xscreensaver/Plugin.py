@@ -16,6 +16,7 @@ from tux_control.plugin.controls.Select import Select
 from tux_control.plugin.controls.Number import Number
 from tux_control.plugin.controls.Text import Text
 from tux_control.plugin.controls.Url import Url
+from tux_control.plugin.controls.File import File, FilePickerType
 
 from tux_control.plugin.validators.RequiredValidator import RequiredValidator
 from tux_control.plugin.validators.UrlValidator import UrlValidator
@@ -284,7 +285,7 @@ class Plugin(IPlugin):
                     name='Image directory',
                     description='Image directory or RSS feed or Atom feed from where images will be randomly chosen.',
                     validators=[],
-                    control=Text()
+                    control=File(picker_type=FilePickerType.DIRECTORY)
                 ),
                 PluginConfigOption(
                     value=xscreensaver_user_config.get('textMode'),
