@@ -204,7 +204,7 @@ class Plugin(IPlugin):
                     )
                 ),
                 PluginConfigOption(
-                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('timeout')),
+                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('timeout', '0:00:00')),
                     default_value=10,
                     key='timeout',
                     name='Blank After',
@@ -220,7 +220,7 @@ class Plugin(IPlugin):
                     )
                 ),
                 PluginConfigOption(
-                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('cycle')),
+                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('cycle', '0:00:00')),
                     default_value=10,
                     key='cycle',
                     name='Cycle After',
@@ -236,7 +236,7 @@ class Plugin(IPlugin):
                     )
                 ),
                 PluginConfigOption(
-                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('lockTimeout')),
+                    value=self._from_xscreensaver_time(xscreensaver_user_config.get('lockTimeout', '0:00:00')),
                     default_value=0,
                     key='lockTimeout',
                     name='Lock Screen After',
@@ -320,7 +320,7 @@ class Plugin(IPlugin):
                     )
                 ),
                 PluginConfigOption(
-                    value=xscreensaver_user_config.get('textLiteral').replace('\\\\n', '\\n'),
+                    value=xscreensaver_user_config.get('textLiteral', '').replace('\\\\n', '\\n'),
                     default_value='XScreenSaver',
                     key='textLiteral',
                     name='Text literal',
@@ -415,15 +415,12 @@ class Plugin(IPlugin):
         """
         return str(datetime.timedelta(seconds=seconds))
 
-    def _from_xscreensaver_time(self, xscreensaver_time: str = None) -> int:
+    def _from_xscreensaver_time(self, xscreensaver_time: str) -> int:
         """
         Convert xscreensaver time to seconds
         :param xscreensaver_time:
         :return:
         """
-
-        if not xscreensaver_time:
-            return 0
 
         parts = xscreensaver_time.split(':')
         parts_len = len(parts)
