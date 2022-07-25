@@ -415,12 +415,15 @@ class Plugin(IPlugin):
         """
         return str(datetime.timedelta(seconds=seconds))
 
-    def _from_xscreensaver_time(self, xscreensaver_time: str) -> int:
+    def _from_xscreensaver_time(self, xscreensaver_time: str = None) -> int:
         """
         Convert xscreensaver time to seconds
         :param xscreensaver_time:
         :return:
         """
+
+        if not xscreensaver_time:
+            return 0
 
         parts = xscreensaver_time.split(':')
         parts_len = len(parts)
