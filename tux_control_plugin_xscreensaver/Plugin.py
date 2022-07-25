@@ -371,7 +371,7 @@ class Plugin(IPlugin):
             'Enabled',
             'Is this screensaver enabled?',
             Checkbox(),
-            value=xscreensaver_user_config.get('enabled')
+            value=xscreensaver_user_config.get('enabled') if xscreensaver_user_config else False
         ))
 
         plugin_config_options.append(PluginConfigOption(
@@ -387,7 +387,7 @@ class Plugin(IPlugin):
             key=item_key,
             description=xscreensaver_config.get('screensaver', {}).get('_description'),
             plugin_config_options=plugin_config_options,
-            is_enabled=xscreensaver_user_config.get('enabled'),
+            is_enabled=xscreensaver_user_config.get('enabled') if xscreensaver_user_config else False,
             is_selected=is_selected
         )
 
