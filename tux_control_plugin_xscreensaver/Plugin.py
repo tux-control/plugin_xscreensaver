@@ -421,8 +421,23 @@ class Plugin(IPlugin):
         :param xscreensaver_time:
         :return:
         """
-        h, m, s = xscreensaver_time.split(':')
-        return int(h) * 3600 + int(m) * 60 + int(s)
+
+        parts = xscreensaver_time.split(':')
+        parts_len = len(parts)
+        try:
+            if parts_len == 1:
+                s, = parts
+                return int(s)
+            elif parts_len == 2:
+                m, s = parts
+                return int(m) * 60 + int(s)
+            elif parts_len == 3:
+                h, m, s = xscreensaver_time.split(':')
+                return int(h) * 3600 + int(m) * 60 + int(s)
+            else:
+                raise ValueError('Unknown number of parts in xscreensaver time')
+        except ValueError:
+            return 0
 
     def _get_xscreensaver_user_config(self) -> ConfigParser:
         config_path = os.path.join(CurrentUser.get_system_user().home_directory, '.xscreensaver')
